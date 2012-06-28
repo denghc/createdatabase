@@ -1,0 +1,104 @@
+﻿{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+
+{% block content %}
+    <div id="help">
+        <ul>
+            <li><a href="/findpassword/" style = "color: white;">找回密码</a></li>
+            <li><a href="/index/" style = "color: white;">登录</a></li>
+        </ul>
+    </div>
+    <div id="header"></div>
+    <div id="banner"><span class="banner">登陆</span></div>
+    <div id="findpassword_window">
+        <div id="open_window"><!--用户注册弹出窗口-->
+            <div class="window_title">新用户注册</div>
+            <div class="close_logo"><a href = "/index/">X</a></div>
+            <div id="window_content">
+                <form name="registrationForm" method="post" action="" id= "registrationForm" onsubmit="return false;">
+                    <ul class="reg_ul">
+                        <li>
+                            <p class="reg_ul_p1">学　　号</p>
+                            <p class="reg_ul_p2">
+                                <input type="text" name="cardid" maxlength="10" value="" id="username" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请输入学生证上的10位学号</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">密　　码</p>
+                            <p class="reg_ul_p2">
+                                <input type="password" name="password" maxlength="30" value="" id="password1" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请输入密码</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">确认密码</p>
+                            <p class="reg_ul_p2">
+                                <input type="password" name="surepassword" maxlength="30" value="" id="password2" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请重复刚才的密码</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">真实姓名</p>
+                            <p class="reg_ul_p2">
+                                <input type="text" name="name" maxlength="30" value="" id="realname" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请输入您的真实姓名</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">电子邮箱</p>
+                            <p class="reg_ul_p2">
+                                <input type="text" name="email" maxlength="50" value="@" id="email" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请输入有效的电子邮箱</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">联系电话</p>
+                            <p class="reg_ul_p2">
+                                <input type="text" name="phonenumber" maxlength="15" value="" id="phonenumber" class="text-input">
+                            </p>
+                            <p class="reg_ul_p3">*请输您的联系方式</p>
+                        </li>
+                        <li>
+                            <p class="reg_ul_p1">所在部门</p>
+                            <p class="reg_ul_p2">
+                                <select name="work" id="work">
+                                    <option value="0" selected="selected">请选择您所在的部门</option>
+                                    <option value="1">大队队部</option>
+                                    <option value="2">科技服务队</option>
+                                </select>
+                            </p>
+                            <p class="reg_ul_p3">*请选择您所在的分队</p>
+                        </li>
+                    </ul>
+
+                </form>
+            </div>
+            <div id="reg_button">
+                <label id="msg" style="color: red;"></label>
+                <input name="reg_button1" type="submit" class="reg_button1" value="注册" onclick="register();"/>
+                <input name="reg_button2" type="reset" class="reg_button2" value="重置"  onclick="Dajaxice.RegisterSystem.logic.reset(Dajax.process);" />
+            </div>
+        </div>
+        <div id="open_window2" style="display:none"><!--用户注册成功弹出窗口-->
+            <div class="window_title">新用户注册</div>
+            <div class="close_logo"><a href = "/index/">X</a></div>
+            <div id="window_content2">
+                <p class="reg_ok">恭喜您，注册成功，请等待管理员批准。</p>
+            </div>
+        </div>
+
+
+
+    </div>
+    <div id="footer1">
+        <ul>
+            <li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+            <li>勤工助学大队值班电话: 010-62783693</li>
+            <li>技术支持: 清华大学信息系统服务部</li>
+        </ul>
+    </div>
+{% endblock %}
