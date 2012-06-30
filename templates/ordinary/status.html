@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+
+{% block content %}
+<div id="header"></div>
+<div id="prompt_banner">
+	<div id="prompt_logo"></div>
+    <div id="welcome_text">
+        <p class="welcome">>欢迎您 {{ workername }} ，</p>
+        <p class="welcome">{{ cardid}}</p>
+        <p class="remind">温馨提示，您今天<span id="mission_color">{{whetherwork}}</span>班</P>
+    </div>
+    <div id="help">
+        <ul>
+            <li><a href="/infomanage/">修改密码</a></li>
+            <li><a href="/page_logout/">注销</a></li>
+      	</ul>
+     </div>
+</div>
+<div id="content">
+	<div id="sidebar">
+    	<div id="sidebar_line"></div>
+        <div id="sidebar_list">
+        	<ul class="sidebar_ul">
+                <li><a href="/showduty/">我的班次</a></li>
+                <li><a href="/attendance/">考核表</a></li>
+                <li><a href="/changerequest/">换班请求</a>
+                    <span id="ballon">{{new_num}}</span></li>
+                <li  id="sidebar_choose"><a href="/status/">请假换班状态</a></li>
+                <li><a href="/infomanage/">个人信息维护</a></li>
+                <li><a href="/communicate/">感情交流区</a></li>
+                <li><a href="/dutywish/">班次志愿填报</a></li>
+            </ul>
+            </div>
+            </div>
+ <div id="maincontent">
+ 	<div id="right_banner">
+    	<span class="banner_text">请假换班状态</span>
+    </div>
+    <div id="qingjia_status">
+    	<div class="window_title">当前请假状态</div>
+    	<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> 
+		<table width="200" border="0" align="left" cellspacing="1" id="table8" >
+  			<tr class="att_name">
+    			<td class="time_wh">请假时间</td>
+    			<td class="duty_wh">请假班次</td>
+                <td class="reason_wh3">请假原因</td>
+                <td class="duty_wh">当前状态</td>
+                <td class="duty_reply">答复</td>
+                <td class="reply_button"></td>
+    		</tr>
+
+            <section id="newleavelist" >
+                {{newleavelist|safe }}
+            </section>
+
+
+ 		 </table>
+  	</div>
+  	<div id="huanban_status">
+  		<div class="window_title">当前换班状态</div>
+  		<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
+ 		 <table width="724" border="0" align="left" cellspacing="1" id="table7" >
+  			<tr class="att_name">
+    			<td class="time_wh">本人时间</td>
+                <td class="time_wh">对方时间</td>
+    			<td class="time_wh">我的班次</td>
+        		<td class="time_wh">对方班次</td>
+    			<td class="time_wh">对方姓名</td>
+    			<td class="reason_wh4">换班原因</td>
+                <td class="time_wh">当前状态</td>
+                <td class="reason_wh3">答复</td>
+                <td class="reply_button"></td>
+   			</tr>
+              <section id="newexchangelist" >
+                  {{newexchangelist|safe }}
+              </section>
+		 </table>   
+	</div> 	
+    </div>
+</div>  
+<div id="footer">
+	<ul>
+    	<li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+        <li>勤工助学大队值班电话: 010-62783693</li>
+        <li>技术支持: 清华大学信息系统服务部</li>
+    </ul>
+</div>
+{% endblock %}

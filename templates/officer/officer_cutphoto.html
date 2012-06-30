@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+{% block content %}
+
+    <div id="header"></div>
+    <div id="prompt_banner">
+        <div id="prompt_logo"></div>
+        <div id="welcome_text">
+            <p class="welcome">>欢迎您 {{ workername }} ，</p>
+            <p class="welcome">{{ cardid}}</p>
+            <p class="remind">温馨提示，您今天<span id="mission_color">{{whetherwork}}</span>班</P>
+        </div>
+        <div id="help">
+            <ul>
+                <li><a href="/officer_selfinfo/">修改密码</a></li>
+                <li><a href="/page_logout/">注销</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="content">
+        <div id="sidebar">
+            <div id="sidebar_line1"></div>
+            <div id="sidebar_list2">
+                <ul class="sidebar_ul">
+                    <li><a href="/officer_infomanage/">考勤信息维护</a></li>
+                    <li><a href="/officer_arrangement/">班次安排</a></li>
+                    <li><a href="/officer_accreditation/">职务分配</a></li>
+                    <li ><a href="/officer_communication/">感情交流区</a></li>
+                    <li><a href="/officer_queryInformation/">信息查询维护</a></li>
+                    <li><a href='/officer_new_application/'>新队员申请</a>
+                        <span id="ballon">{{ newworkernum }}</span></li>
+                    <li><a href="/officer_data_managerment/">数据导入导出</a></li>
+                    <li id="sidebar_choose"><a href="/officer_selfinfo/">个人信息维护</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="maincontent">
+
+            <h3>头像剪切 </h3>
+            {% if messages %}
+                {% for message in messages %}
+                    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            <div class="area">
+                <div style="float: left; width: 45%;" align="left">
+                    <p class="instructions">点击原图 选择剪切区域</p>
+                    <div style="margin: 0pt 0.3em; width: 300px; height: 300px;" class="frame">
+                        <img src="{{vir_path}}" id="photo" alt="30"/>
+                    </div>
+                </div>
+
+                <div style="float: left;  padding-top:50px; " align="right">
+                    <p style="font-size: 110%; font-weight: bold; padding-left: 0.1em;">预览选择区域</p>
+
+                    <div style="margin: 0pt 1em; width: 100px; height: 100px;" class="frame" >
+                        <div style="width: 100px; height: 100px; overflow: hidden;" id="preview">
+                            <img style="width: 244px; height: 244px; margin-left: -71px; margin-top: -54px;" src="{{vir_path}}" alt="300"/>
+                        </div>
+                    </div>
+
+                    <form action="" method="POST">{% csrf_token %}
+                        <table style="margin-top: 1em;">
+                            <thead>
+                            <tr>
+                                <th style="font-size: 110%; font-weight: bold; text-align: left; padding-left: 0.1em;" colspan="2">
+                                    剪切坐标
+                                </th>
+                                <th style="font-size: 110%; font-weight: bold; text-align: left; padding-left: 0.1em;" colspan="2">
+                                    剪切尺寸
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td style="width: 10%;"><b>X<sub>1</sub>:</b></td>
+                                <td style="width: 30%;">{{form.x1}}</td>
+                                <td style="width: 20%;"><b>宽度:</b></td>
+                                <td>{{form.w}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Y<sub>1</sub>:</b></td>
+                                <td>{{form.y1}}</td>
+                                <td><b>高度:</b></td>
+                                <td>{{form.h}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>X<sub>2</sub>:</b></td>
+                                <td>{{form.x2}}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><b>Y<sub>2</sub>:</b></td>
+                                <td>{{form.y2}}</td>
+                                <td></td>
+                                <td><input type="submit" value="保存"/></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+
+                </div>
+                <div style="clear:left;"></div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+            <li>勤工助学大队值班电话: 010-62783693</li>
+            <li>技术支持: 清华大学信息系统服务部</li>
+        </ul>
+    </div>
+{% endblock %}

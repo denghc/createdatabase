@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+{% block content %}
+<div id="header"></div>
+<div id="banner"><span class="banner_text">登陆</span></div>
+<div id="login_window">
+    <div class="form1" id="login">
+        <form class="form1" name="form1" method="post" action="/" id="login_form" onsubmit="return false;">
+            {% csrf_token %}
+            <div class="form1" >
+            <label for="student_id" id="label1">学号</label>
+            <input  name="username" type="text" id="student_id" tabindex="1" size="25" maxlength="25" />
+            </div>
+            <div class="form1" >
+            <label for="password" id="label2">密码</label>
+            <input name="password" type="password" id="password" tabindex="2" size="25" maxlength="25" />
+            </div>
+            <div id="login_button">
+                <input name="login_button1" type="submit" id="login_button1" value="登录" onclick="login();"  />
+                <label id="msg" style="color: red;"></label>
+            </div>
+            <input type="hidden" name="next" value="{{ next }}" />
+            <input type="checkbox" name="advanced_choice" id="advanced_choice" tabindex="3" checked="false" />
+            <label for="advanced_choice" id="form3">以队委或班次负责人身份登陆</label>
+        </form>
+
+
+        <div id="login_ol">
+            <ul>
+                <li><a href="/register/">新用户注册</a></li>
+                <li><a href="/findpassword/">忘记密码</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="footer1">
+    <ul>
+        <li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+        <li>勤工助学大队值班电话: 010-62783693</li>
+        <li>技术支持: 清华大学信息系统服务部</li>
+    </ul>
+</div>
+{% endblock %}

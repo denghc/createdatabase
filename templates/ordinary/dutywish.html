@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+
+{% block content %}
+<div id="header"></div>
+<div id="prompt_banner">
+	<div id="prompt_logo"></div>
+    <div id="welcome_text">
+        <p class="welcome">>欢迎您 {{ workername }} ，</p>
+        <p class="welcome">{{ cardid}}</p>
+        <p class="remind">温馨提示，您今天<span id="mission_color">{{whetherwork}}</span>班</P>
+    </div>
+    <div id="help">
+        <ul>
+            <li><a href="/infomanage/">修改密码</a></li>
+            <li><a href="/page_logout/">注销</a></li>
+      	</ul>
+      </div>
+    </div>
+<div id="content">
+	<div id="sidebar">
+    	<div id="sidebar_line"></div>
+        <div id="sidebar_list">
+        	<ul class="sidebar_ul">
+                <li ><a href="/showduty/">我的班次</a></li>
+                <li><a href="/attendance/">考核表</a></li>
+                <li><a href="/changerequest/">换班请求</a>
+                    <span id="ballon">{{new_num}}</span></li>
+                <li><a href="/status/">请假换班状态</a></li>
+                <li><a href="/infomanage/">个人信息维护</a></li>
+                <li><a href="/communicate/">感情交流区</a></li>
+                <li id="sidebar_choose"><a href="/dutywish/">班次志愿填报</a></li>
+            </ul>
+            </div>
+            </div>
+ <div id="maincontent">
+ 	<div id="right_banner">
+    	<span class="banner_text">班次志愿填报</span>
+    </div>
+
+    <hr align="left" width="724" size="1" noshade="noshade" class="hr"/> 
+    <div id="maincontent1">
+   <form class="form1" name="wishnum" method="post" action="/" id="wishnum" onsubmit="return false;">
+    最少班次<input type="text" name="minnum" maxlength="30" value="{{ minnum}}" id="minnum" class="text-input">
+    最多班次 <input type="text" name="maxnum" maxlength="30" value="{{ maxnum}}" id="maxnum" class="text-input">
+       <input name="tianbao" type="submit" id="updatenum" align="" value="提交" onclick="reset_numwish();" style="background-color: #f9ad37;" />
+       <label id="msg" style="color: red;"></label>
+   </form>
+     <hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
+        <table width="726" border="0" align="left" cellspacing="1" id="table1" >
+    <tr class="week">
+    <td class="week_wh">&nbsp;</td>
+    <td class="week_wh">星期一</td>
+    <td class="week_wh">星期二</td>
+    <td class="week_wh">星期三</td>
+    <td class="week_wh">星期四</td>
+    <td class="week_wh">星期五</td>
+    <td class="week_wh">星期六</td>
+    <td class="week_wh">星期天</td>
+  </tr>
+        <form class="form1" name="dutywish" method="post" action="/" id="dutywish" onsubmit="return false;">
+        <section id="wishlist" >
+            {{ wishlist|safe }}
+        </section>
+            <input type="hidden" name="b">
+        </form>
+</table>
+		<div id="dutywish_tip">
+        	<p class="help_text1">*请点右侧重选按钮后，在上班的班次上打勾。</p>
+            <span id="duty_number"></span>
+      	</div>
+            <input name="tianbao" type="submit" id="reset" align="" value="重选" onclick="reset_dutywish();" style="background-color: #f9ad37;" />
+   		    <input name="tianbao" type="submit" id="update" value="提交" onclick="updateDutywish()"  style="display:none" />
+
+	</div> 	
+    </div>
+</div>  
+<div id="footer">
+	<ul>
+    	<li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+        <li>勤工助学大队值班电话: 010-62783693</li>
+        <li>技术支持: 清华大学信息系统服务部</li>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+
+{% block content %}
+    <div id="header"></div>
+    <div id="prompt_banner">
+        <div id="prompt_logo"></div>
+        <div id="welcome_text">
+            <p class="welcome">欢迎您 {{ workername }} ，</p>
+            <p class="welcome">{{ cardid}}</p>
+            <p class="remind">温馨提示，您今天<span id="mission_color">{{whetherwork}}</span>班</P>
+        </div>
+        <div id="help">
+            <ul>
+                <li><a href="/officer_selfinfo/">修改密码</a></li>
+                <li><a href="/page_logout/">注销</a></li>
+            </ul>
+        </div>
+    </div>
+<div id="content">
+	<div id="sidebar">
+    	<div id="sidebar_line1"></div>
+        <div id="sidebar_list2">
+        	<ul class="sidebar_ul">
+            	<li><a href="/officer_infomanage/">考勤信息维护</a></li>
+                <li><a href="/officer_arrangement/">班次安排</a></li>
+                <li id="sidebar_choose"><a href="/officer_accreditation/">职务分配</a></li>
+                <li><a href="/officer_communication/">感情交流区</a></li>
+                <li><a href="/officer_queryInformation/">信息查询维护</a></li>
+                <li><a href='/officer_new_application/'>新队员申请</a>
+                	<span id="ballon">{{ newworkernum }}</span></li>
+                <li><a href="/officer_data_managerment/">数据导入导出</a></li>
+                <li><a href="/officer_selfinfo/">个人信息维护</a></li>
+            </ul>
+        </div>
+    </div>
+<div id="maincontent">
+	 	<div id="right_banner">
+	    	<span class="banner_text">职务分配</span>
+	    </div>
+	    <div class="help">
+	    	<p class="help_info">*通过按钮调整负责人和普通队员</p>
+	    </div>
+	 	<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
+    <div id="maincontent3">
+
+            <section id="workerset" >
+                {{ workerset|safe }}
+            </section>
+
+        <hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
+
+                <section id="managerser" >
+                    {{ managerser|safe }}
+                </section>
+	</div>	<!--maincontent-->
+</div>	<!--maincontent-->
+</div>
+<div id="footer">
+	<ul>
+    	<li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+        <li>勤工助学大队值班电话: 010-62783693</li>
+        <li>技术支持: 清华大学信息系统服务部</li>
+    </ul>
+</div>
+
+{% endblock %}
+

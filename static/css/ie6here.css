@@ -1,0 +1,22 @@
+.reg_ul {
+	padding:0;
+	margin:13px 0 0 10px;
+}
+.reg_ul_p3 {
+	font-size:11px;
+	float:left;
+	margin:5px 0 0 8px;
+	color:#B9B9B9;
+}
+#open_window3 {
+	position: absolute;
+	padding: 15px;
+	width: 405px;
+	height: 185px;
+	top:-40%;
+	left:-10%;
+	background-color: #EDEDED;
+	z-index:1002;
+	overflow: hidden;
+	border: 1px solid #666;	
+}
