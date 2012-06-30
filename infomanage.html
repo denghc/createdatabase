@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load dajaxice_templatetags %}
+
+{% block title %}清华大学勤工大队签到系统{% endblock %}
+
+{% block content %}
+
+<div id="header"></div>
+<div id="prompt_banner">
+	<div id="prompt_logo"></div>
+    <div id="welcome_text">
+        <p class="welcome">>欢迎您 {{ workername }} ，</p>
+        <p class="welcome">{{ cardid}}</p>
+        <p class="remind">温馨提示，您今天<span id="mission_color">{{whetherwork}}</span>班</P>
+    </div>
+    <div id="help">
+        <ul>
+            <li><a href="/infomanage/">修改密码</a></li>
+            <li><a href="/page_logout/">注销</a></li>
+        </ul>
+      </div>
+    </div>
+<div id="content">
+	<div id="sidebar">
+    	<div id="sidebar_line"></div>
+        <div id="sidebar_list">
+        	<ul class="sidebar_ul">
+                <li ><a href="/showduty/">我的班次</a></li>
+                <li><a href="/attendance/">考核表</a></li>
+                <li ><a href="/changerequest/">换班请求</a>
+                    <span id="ballon">{{new_num}}</span></li>
+                <li><a href="/status/">请假换班状态</a></li>
+                <li id="sidebar_choose"><a href="/infomanage/">个人信息维护</a></li>
+                <li><a href="/communicate/">感情交流区</a></li>
+                <li><a href="/dutywish/">班次志愿填报</a></li>
+            </ul>
+            </div>
+            </div>
+
+ <div id="maincontent">
+     <div id="open_window2" style="display:none"><!--用户修改个人信息成功弹出窗口-->
+         <div class="window_title">用户个人信息修改</div>
+         <div class="close_logo"><a href = "/infomanage/">X</a></div>
+         <div id="window_content2">
+             <p class="reg_ok">个人信息修改成功，请记住修改后密码。</p>
+         </div>
+     </div>
+ 	<div id="right_banner">
+    	<span class="banner_text">个人信息维护</span>
+    </div>
+    <hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
+    	<div id="avatar">
+        	<div id="avatar_photo"><img src="{{vir_path}}" /></div>
+            <div id="avatar_button">
+           	  <input name="avatar_change" type="submit" id="avatar_change" value="修改头像" onclick="Dajaxice.RegisterSystem.logic.uploadPhoto(Dajax.process);" />
+            </div>    
+    	</div>
+<div id="personal_info">
+	<div id="window_photo" style="display:none" ><!--选择头像弹出窗口-->
+			<div class="window_title">选择头像</div>
+    	 	<div class="close_logo"><a href="javascript:void(0);" id="hidewindow_photo">X</a></div>
+            <div id="photo_content">
+                <form action="." method="post" id = "photo" name = "photo">{% csrf_token %}
+                    <table border="0">
+                        <tbody>
+                        <tr>
+                        <td><input type = "file" name ="photo_name" id = "id_photo_name">
+                        </td>
+                        </tr>
+                        <tr>
+                            <td><label id="msg_photo" style="color: red;"></label>
+                                <input type="submit" value="上传"  onclick="Dajaxice.RegisterSystem.logic.uploadPhoto(Dajax.process);" /></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            <div class="clear_float"></div>
+      </div>
+    </div>
+
+
+
+    <div id="left_info">
+            	<ul id="info_label">
+                    <li>学号</li>
+                	<li>姓名</li>
+                    <li>密码</li>
+                    <li>重复密码</li>
+                    <li>邮箱</li>
+                    <li>电话</li>
+                    <li>所在部门</li>
+                </ul>
+            </div>
+    <form name="infoForm" method="post" action="" id= "infoForm" onsubmit="return false;">
+        	<div id="main_info">
+
+            	<ul id="info_list">
+                    <li>{{ card_id }}</li>
+                    <li><input type="text" name="username" maxlength="30" value="{{ user_name }}" id="username" class="text-input"></li>
+                	<li><input type="password" name="password" maxlength="30" value="{{ user_password}}" id="password1" class="text-input"></li>
+                    <li><input type="password" name="passwordagain" maxlength="30" value="{{ user_passwordagain}}" id="passwordagain" class="text-input"></li>
+                    <li><input type="text" name="email" maxlength="30" value="{{ user_email}}" id="email" class="text-input"></li>
+                    <li><input type="text" name="phonenumber" maxlength="30" value="{{ user_phonenumber}}" id="phonenumber" class="text-input"></li>
+                    <li>{{ department }}</li>
+                </ul>
+             </div>
+             <div id="info_button">
+            	<ul id="button_list">
+                	<li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+
+                    <li>
+                    	<input name="change" type="submit" class="change" value="提交"  onclick="changeinfo();"/>
+                    </li>
+                    <label id="msg" style="color: red;"></label>
+                </ul>
+             </div>
+    </form>
+        </div>
+  </div>
+    
+	</div> 	
+    </div>
+</div>
+
+<div id="footer">
+	<ul>
+    	<li>勤工助学大队邮箱: qgzhx@mail.tsinghua.edu.cn </li>
+        <li>勤工助学大队值班电话: 010-62783693</li>
+        <li>技术支持: 清华大学信息系统服务部</li>
+    </ul>
+</div>
+{% endblock %}
