@@ -211,6 +211,15 @@ def infomanage(request):
     workerinfo = WorkerInfo.objects.get(user = request.user.id)
     department_id  = workerinfo.department.id
     de_name = Department.objects.get(id = department_id).department_mame
+    workerinfo = WorkerInfo.objects.get(user = request.user)
+    allworkerlist = list(WorkerInfo.objects.filter(department = workerinfo.department ))
+    content = u'<table ><tr>'\
+              u'<td class="att_wh3">队员姓名</td><td class="att_wh">学号</td><td class="att_wh">邮箱</td><td class="att_wh">电话</td>'
+    for item in allworkerlist:
+        if(item.accept != 2):
+            content += u'<tr><td class="att_wh">%s</td><td class="num_wh">%s</td><td class="att_wh">%s</td><td class="att_wh">%s</td>'\
+                       u'</tr>' %(item.name, item.user.username, item.user.email, item.phone)
+    content += u'</tr></table>'
     if workerinfo.photo_name == "0":
         path = "images/css/avatar80.png"
     else:
@@ -220,6 +229,7 @@ def infomanage(request):
         currentMessage.ifaddold  = 0
         currentMessage.save()
     return render_to_response('ordinary/infomanage.html', {
+        'workermanagelist':content,
         'workername':request.user.get_profile().name,
         'card_id': request.user,
         'user_name':workerinfo.name,
@@ -1210,8 +1220,20 @@ def AllExtendenceExcel(request):
     absenteeism = u'旷工次数'
     late = u'迟到次数'
     exchange = u'换班次数'
-    writer.writerow([ id.encode('GBK'), name.encode('GBK'),leave.encode('GBK'),absenteeism.encode('GBK'),late.encode('GBK'),exchange.encode('GBK')])
+    add=u'加班工时'
+    minus=u'早退工时'
+    normolwork=u'工时记录'
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),leave.encode('utf8'),absenteeism.encode('utf8'),
+                      late.encode('utf8'),exchange.encode('utf8'),add.encode('utf8'),minus.encode('utf8'),normolwork.encode('utf8')])
     for item in workerlist:
+        early = Early.objects.filter(worker = item.user)
+        overtime = Overtime.objects.filter(worker = item.user)
+        overhourtotal = 0.0
+        earlyhourtotal = 0.0
+        for overtemp in overtime:
+            overhourtotal += overtemp.hournum
+        for earlytemp in early:
+            earlyhourtotal += earlytemp.hournum
         leave = Leave.objects.filter( state = 1, worker = item.user)
         absenteeism = Absenteeism.objects.filter(worker = item.user)
         late = Late.objects.filter(worker = item.user)
@@ -1219,9 +1241,10 @@ def AllExtendenceExcel(request):
         pexchange = Exchange.objects.filter( state = 1, passivite_worker = item.user)
         num_total = len(iexchange) +  len(pexchange)
         name = u'%s'%(item.name)
-        name = name.encode('GBK')
-        if(len(leave) != 0 or len(absenteeism) != 0 or len(late) != 0 or num_total!=0):
-            writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total)])
+        name = name.encode('utf8')
+        work = Work.objects.filter( worker = item.user)
+        if(len(leave) != 0 or len(absenteeism) != 0 or len(late) != 0 or num_total!=0 or overhourtotal != 0 or earlyhourtotal != 0 or len(work) != 0):
+            writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total), str(overhourtotal) , str(earlyhourtotal), str(len(work))])
     return response
 
 def AllWorkArrangeExcel(request):
@@ -1240,7 +1263,7 @@ def AllWorkArrangeExcel(request):
     fri = u'星期五'
     sat = u'星期六'
     sun = u'星期日'
-    writer.writerow([ worknum.encode('GBK'), time.encode('GBK'),mon.encode('GBK'),tue.encode('GBK'),wed.encode('GBK'),thu.encode('GBK'),fri.encode('GBK'),sat.encode('GBK'),sun.encode('GBK')])
+    writer.writerow([ worknum.encode('utf8'), time.encode('utf8'),mon.encode('utf8'),tue.encode('utf8'),wed.encode('utf8'),thu.encode('utf8'),fri.encode('utf8'),sat.encode('utf8'),sun.encode('utf8')])
     for i in range(num):
         schedulelist = Schedule.objects.filter(department = workerinfo.department,workorder = i + 1)
         worknum = str(i)
@@ -1260,7 +1283,7 @@ def AllWorkArrangeExcel(request):
                 sat = get_name(item.worker, item.administrator.id)
             elif(item.day == 7):
                 sun = get_name(item.worker, item.administrator.id)
-        writer.writerow([ worknum.encode('GBK'), time.encode('GBK'),mon.encode('GBK'),tue.encode('GBK'),wed.encode('GBK'),thu.encode('GBK'),fri.encode('GBK'),sat.encode('GBK'),sun.encode('GBK')])
+        writer.writerow([ worknum.encode('utf8'), time.encode('utf8'),mon.encode('utf8'),tue.encode('utf8'),wed.encode('utf8'),thu.encode('utf8'),fri.encode('utf8'),sat.encode('utf8'),sun.encode('utf8')])
     return response
 
 def AllWorkerInfoExcel(request):
@@ -1274,10 +1297,10 @@ def AllWorkerInfoExcel(request):
     id = u'学号'
     email= u'邮箱'
     phonenum = u'电话'
-    writer.writerow([ id.encode('GBK'), name.encode('GBK'),email.encode('GBK'),phonenum.encode('GBK')])
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),email.encode('utf8'),phonenum.encode('utf8')])
     for item in workerlist:
-        name = item.name.encode('GBK')
-        email = item.user.email.encode('GBK')
+        name = item.name.encode('utf8')
+        email = item.user.email.encode('utf8')
         phonenum = item.phone
         writer.writerow([item.user.username , name, email, phonenum])
     return response
@@ -1297,10 +1320,23 @@ def AllInfoExcel(request):
     absenteeism = u'旷工次数'
     late = u'迟到次数'
     exchange = u'换班次数'
-    writer.writerow([ id.encode('GBK'), name.encode('GBK'),email.encode('GBK'),phonenum.encode('GBK'),leave.encode('GBK'),absenteeism.encode('GBK'),late.encode('GBK'),exchange.encode('GBK')])
+    add=u'加班工时'
+    minus=u'早退工时'
+    normolwork=u'工时记录'
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),email.encode('utf8'),phonenum.encode('utf8'),leave.encode('utf8'),
+                      absenteeism.encode('utf8'),late.encode('utf8'),exchange.encode('utf8'),add.encode('utf8'),minus.encode('utf8'),normolwork.encode('utf8')])
     for item in workerlist:
-        name = item.name.encode('GBK')
-        email = item.user.email.encode('GBK')
+        early = Early.objects.filter(worker = item.user)
+        overtime = Overtime.objects.filter(worker = item.user)
+        overhourtotal = 0.0
+        earlyhourtotal = 0.0
+        for overtemp in overtime:
+            overhourtotal += overtemp.hournum
+        for earlytemp in early:
+            earlyhourtotal += earlytemp.hournum
+        name = u'%s'%(item.name)
+        name = name.encode('utf8')
+        email = item.user.email.encode('utf8')
         phonenum = item.phone
         leave = Leave.objects.filter( state = 1, worker = item.user)
         absenteeism = Absenteeism.objects.filter(worker = item.user)
@@ -1308,7 +1344,9 @@ def AllInfoExcel(request):
         iexchange = Exchange.objects.filter( state = 1, initiative_worker = item.user)
         pexchange = Exchange.objects.filter( state = 1, passivite_worker = item.user)
         num_total = len(iexchange) +  len(pexchange)
-        writer.writerow([item.user.username , name, email, phonenum,  str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total)])
+        work = Work.objects.filter( worker = item.user)
+        writer.writerow([item.user.username , name, email, phonenum,  str(len(leave)), str(len(absenteeism)) ,
+                         str(len(late)), str(num_total), str(overhourtotal) , str(earlyhourtotal) , str(len(work))])
     return response
 
 def MyWorkerAttendence(request):
@@ -1324,7 +1362,11 @@ def MyWorkerAttendence(request):
     absenteeism = u'旷工次数'
     late = u'迟到次数'
     exchange = u'换班次数'
-    writer.writerow([ id.encode('GBK'), name.encode('GBK'),leave.encode('GBK'),absenteeism.encode('GBK'),late.encode('GBK'),exchange.encode('GBK')])
+    add=u'加班工时'
+    minus=u'早退工时'
+    normolwork=u'工时记录'
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),leave.encode('utf8'),absenteeism.encode('utf8'),
+                      late.encode('utf8'),exchange.encode('utf8'),add.encode('utf8'),minus.encode('utf8'),normolwork.encode('utf8')])
     for item in workerlist:
         leave = Leave.objects.filter(administrator = request.user, state = 1, worker = item.user)
         absenteeism = Absenteeism.objects.filter(administrator = request.user, worker = item.user)
@@ -1332,9 +1374,19 @@ def MyWorkerAttendence(request):
         i_ma_exchange = Exchange.objects.filter(iadministrator = request.user, state = 1, initiative_worker = item.user)
         p_ma_exchange = Exchange.objects.filter(padministrator = request.user, state = 1, passivite_worker = item.user)
         num_total = len(i_ma_exchange) + len(p_ma_exchange)
-        name = item.name.encode('GBK')
-        if(len(leave) != 0 or len(absenteeism) != 0 or len(late) != 0 or num_total!=0):
-            writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total)])
+        name = item.name.encode('utf8')
+        early = Early.objects.filter(administrator = request.user, worker = item.user)
+        overtime = Overtime.objects.filter(administrator = request.user, worker = item.user)
+        overhourtotal = 0.0
+        earlyhourtotal = 0.0
+        for overtemp in overtime:
+            overhourtotal += overtemp.hournum
+        for earlytemp in early:
+            earlyhourtotal += earlytemp.hournum
+        work = Work.objects.filter(administrator = request.user, worker = item.user)
+        if(len(leave) != 0 or len(absenteeism) != 0 or len(late) != 0 or num_total!=0 or overhourtotal!= 0 or earlyhourtotal!=0 or len(work)!=0):
+            writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)),
+                             str(num_total), str(overhourtotal) , str(earlyhourtotal), str(len(work))])
     return response
 
 def workerwishExcel(request):
@@ -1353,7 +1405,7 @@ def workerwishExcel(request):
     fri = u'星期五'
     sat = u'星期六'
     sun = u'星期日'
-    writer.writerow([ worknum.encode('GBK'), time.encode('GBK'),mon.encode('GBK'),tue.encode('GBK'),wed.encode('GBK'),thu.encode('GBK'),fri.encode('GBK'),sat.encode('GBK'),sun.encode('GBK')])
+    writer.writerow([ worknum.encode('utf8'), time.encode('utf8'),mon.encode('utf8'),tue.encode('utf8'),wed.encode('utf8'),thu.encode('utf8'),fri.encode('utf8'),sat.encode('utf8'),sun.encode('utf8')])
     for i in range(num):
         schedulelist = Schedule.objects.filter(department = workerinfo.department,workorder = i + 1)
         worknum = str(i)
@@ -1374,7 +1426,7 @@ def workerwishExcel(request):
                 sat = get_wishname(choose.chooseworker)
             elif(item.day == 7):
                 sun = get_wishname(choose.chooseworker)
-        writer.writerow([ worknum.encode('GBK'), time.encode('GBK'),mon.encode('GBK'),tue.encode('GBK'),wed.encode('GBK'),thu.encode('GBK'),fri.encode('GBK'),sat.encode('GBK'),sun.encode('GBK')])
+        writer.writerow([ worknum.encode('utf8'), time.encode('utf8'),mon.encode('utf8'),tue.encode('utf8'),wed.encode('utf8'),thu.encode('utf8'),fri.encode('utf8'),sat.encode('utf8'),sun.encode('utf8')])
     return response
 
 def workwishnumExcel(request):
@@ -1388,9 +1440,9 @@ def workwishnumExcel(request):
     id = u'学号'
     email= u'最少班次'
     phonenum = u'最多班次'
-    writer.writerow([ id.encode('GBK'), name.encode('GBK'),email.encode('GBK'),phonenum.encode('GBK')])
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),email.encode('utf8'),phonenum.encode('utf8')])
     for item in workerlist:
-        name = item.name.encode('GBK')
+        name = item.name.encode('utf8')
         choose =  WorkerChoose.objects.filter(worker = item)
         if(len(choose) > 0 ):
             choose = WorkerChoose.objects.get(worker = item)
