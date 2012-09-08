@@ -1172,8 +1172,11 @@ def officer_uploadexcel(request):
                 for sh in wk.sheets():
                     for i in range(sh.nrows):
                         if i > 0 :
-                            content += u'<tr><td>%s</td><td>%s</td><td></td></tr>' %(sh.cell_value(i,0),sh.cell_value(i,1) )
                             usercardid = sh.cell_value(i,0)
+                            if ( type(usercardid) == float ):
+                                if ( usercardid == int(usercardid) ):
+                                    usercardid = int(usercardid)
+                            content += u'<tr><td>%s</td><td>%s</td><td></td></tr>' %(usercardid,sh.cell_value(i,1) )
                             username = sh.cell_value(i,1)
                             userid = User.objects.filter(username=usercardid)
                             if len(userid) == 0:
