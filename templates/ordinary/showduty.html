@@ -61,7 +61,7 @@
 
     <div id="window_huanban" style="display:none" ><!--换班原因弹出窗口-->
         <form name="huanbanForm" method="post" action="" id= "huanbanForm" onsubmit="return false;">
-			<div class="window_title">换班</div>
+			<div class="window_title">换班(会有短暂延时，请勿多次点击提交)</div>
     	 	<div class="close_logo"><a href="javascript:void(0);" id="hidewindow_huanban">X</a></div>
          	<div id="window_huanban2">
                  <ul class="reg_ul">
@@ -115,7 +115,7 @@
 
 	  <div id="window_leave" style="display:none"><!--请假弹出窗口-->
           <form name="leaveForm" method="post" action="" id= "leaveForm" onsubmit="return false;">
-		<div class="window_title">请假</div>
+		<div class="window_title">请假(会有短暂延时，请勿多次点击提交)</div>
     	 <div class="close_logo"><a href="javascript:void(0);" id="hidewindow_leave">X</a></div>
          <div id="window_leave2">
              <ul class="reg_ul">
@@ -145,7 +145,7 @@
         </div>
        <span class="help_text">(请假原因)</span>
        <label id="leave_msg" style="color: red;"></label>
-      <input name="qingjia" type="submit" class="submit" value="提交" onclick="setleave();" />
+      <input name="qingjia" type="submit" class="submit" value="提交" onclick="setleave();"  />
           </form>
      </div>
         <div id="open_window2" style="display:none"><!--提交请假成功弹出窗口-->

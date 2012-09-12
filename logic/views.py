@@ -585,8 +585,9 @@ def manage_status(request):
                        u'<input type="text" name="leave_id" style="display: none" value="%s" >' \
                        u'<input type="text" name="reason_content" maxlength="20" value="%s" id="cardid" class="text-input">' \
                        u'</form></td><td class="duty_wh"><input name="agree" type="submit" class="refuse" value="批准" onclick = "agree_newleave(%s);" /></td><td class="duty_wh">' \
-                       u'<input name="refuse" type="submit" class="refuse" value="拒绝" onclick = "refuse_newleave(%s);" /></td></tr>' \
-                       u'</table>' %(workerinfo.name, item.worker.username, item.time.date(), item.workorder, item.reason, item.id, item.id, item.id, item.replyreason,  item.id, item.id )
+                       u'<input name="refuse" type="submit" class="refuse" value="拒绝" onclick = "refuse_newleave(%s);" /></td>' \
+                       u'</tr>' %(workerinfo.name, item.worker.username, item.time.date(), item.workorder, item.reason, item.id, item.id, item.id, item.replyreason,  item.id, item.id )
+        content +=u'</table>'
     currentMessage = CurrentMessage.objects.get(worker = request.user)
     if currentMessage.ifaddold  == 1:
         currentMessage.ifaddold  = 0
