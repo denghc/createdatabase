@@ -695,10 +695,24 @@ def setexchange(request , form):
                 if(goalworker.find(workerstr_my) > 0):
                     dajax.assign('#exchange_msg', 'innerHTML', u'您在对方班次已有班！')
                     return dajax.json()
+                mydate = getdate(form.cleaned_data['myday'])
+                goaldate =  getdate(form.cleaned_data['goalday'])
+                workerinfo = WorkerInfo.objects.get(user = request.user)
+                exchange = Exchange.objects.filter(initiative_worker = request.user, passivite_worker = User.objects.get(username=form.cleaned_data['goalname']),
+                    iday = form.cleaned_data['myday'],pday = form.cleaned_data['goalday'], iorder = form.cleaned_data['myorder'],
+                    porder = form.cleaned_data['goalorder'],  state = 0,
+                    itime =mydate, ptime =  goaldate, padministrator =goalschedule.administrator,iadministrator =  myschedule.administrator, department = dep )
+                if(len(exchange)>0):
+                    dajax.assign('#exchange_msg', 'innerHTML', u'您提交过相同的换班请求，且对方尚未回复！')
+                    return dajax.json()
+                exchange = Exchange.objects.filter(initiative_worker = request.user, passivite_worker = User.objects.get(username=form.cleaned_data['goalname']),
+                    iday = form.cleaned_data['myday'],pday = form.cleaned_data['goalday'], iorder = form.cleaned_data['myorder'],
+                    porder = form.cleaned_data['goalorder'],state = 1,
+                    itime =mydate, ptime =  goaldate, padministrator =goalschedule.administrator,iadministrator =  myschedule.administrator, department = dep )
+                if(len(exchange)>0):
+                    dajax.assign('#exchange_msg', 'innerHTML', u'您提交过相同的换班请求，且对方已同意！')
+                    return dajax.json()
                 if(goalworker.find(workerstr_goal) > 0):
-                    mydate = getdate(form.cleaned_data['myday'])
-                    goaldate =  getdate(form.cleaned_data['goalday'])
-                    workerinfo = WorkerInfo.objects.get(user = request.user)
                     content = request.user.username + u' ' +workerinfo.name +u'请求和您换班：\n对方班次：周%s班次%d\n希望换到：周%s班次%d\n原因：  %s' %(form.cleaned_data['myday'],
                                                                                                         form.cleaned_data['myorder'],form.cleaned_data['goalday'],form.cleaned_data['goalorder'],form.cleaned_data['reason']) + u'\n请尽快登录系统回复'
                     try:
