@@ -24,6 +24,10 @@ class LeaveForm(forms.Form):
     leaveorder = forms.IntegerField()
     reason = forms.CharField()
 
+class SearchForm(forms.Form):
+    startweek = forms.IntegerField()
+    endweek = forms.IntegerField()
+
 class  ExchangeForm(forms.Form):
     goalname = forms.CharField()
     myday = forms.IntegerField()

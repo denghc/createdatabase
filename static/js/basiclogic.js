@@ -189,6 +189,16 @@ function finishovertime(){
     Dajaxice.RegisterSystem.logic.finishovertime(Dajax.process, {'form':data});
 }
 
+function search(){
+    var data = $('#searchForm').serializeObject();
+    Dajaxice.RegisterSystem.logic.search(Dajax.process, {'form':data});
+}
+
+function searchexcel(){
+    var data = $('#searchForm').serializeObject();
+    Dajaxice.RegisterSystem.logic.searchexcel(Dajax.process, {'form':data});
+}
+
 function finishearly(){
     var data = $('#early').serializeObject();
     Dajaxice.RegisterSystem.logic.finishearly(Dajax.process, {'form':data});
@@ -281,6 +291,30 @@ function open_officer_specific_early(worker_id){
 }
 function open_officer_specific_overtime(worker_id){
     Dajaxice.RegisterSystem.logic.open_officer_specific_overtime(Dajax.process, {'form':worker_id});
+}
+
+
+function open_search_leave(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_leave(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+function open_search_late(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_late(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+function open_search_absenteeism(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_absenteeism(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+function open_search_exchange(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_exchange(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+function open_search_work(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_work(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+
+function open_search_early(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_early(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
+}
+function open_search_overtime(worker_id, startweek, endweek){
+    Dajaxice.RegisterSystem.logic.open_search_overtime(Dajax.process, {'form':worker_id +','+ startweek+','+ endweek});
 }
 
 function settomanager(worker_id){

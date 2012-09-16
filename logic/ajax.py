@@ -1631,6 +1631,34 @@ def open_officer_late(request):
     return dajax.json()
 
 @dajaxice_register
+def searchexcel(request, form):
+    dajax = Dajax()
+    form = SearchForm(form)
+    if form.is_valid():
+        startweek = form.cleaned_data['startweek']
+        endweek = form.cleaned_data['endweek']
+        dajax.script("window.open('/SearchExtendenceExcel/?p1="+str(startweek)+"&p2="+str(endweek) +"')")
+    return dajax.json()
+
+@dajaxice_register
+def search(request, form):
+    dajax = Dajax()
+    form = SearchForm(form)
+    if form.is_valid():
+        startweek = form.cleaned_data['startweek']
+        endweek = form.cleaned_data['endweek']
+        workerinfo = WorkerInfo.objects.get(user = request.user)
+        content = gettotal_searchrecord(request, startweek, endweek)
+        dajax.assign('#latelist', 'innerHTML', "")
+        dajax.assign('#absenlist', 'innerHTML', "")
+        dajax.assign('#leavelist', 'innerHTML', "")
+        dajax.assign('#exchangelist', 'innerHTML', "")
+        dajax.assign('#worklist', 'innerHTML', content)
+        dajax.assign('#earlylist', 'innerHTML', "")
+        dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
 def open_officer_work(request):
     dajax = Dajax()
     workerinfo = WorkerInfo.objects.get(user = request.user)
@@ -1686,7 +1714,11 @@ def open_officer_specific_exchange(request , form ):
     pexchange = Exchange.objects.filter(passivite_worker = workuser, state = 1)
     iexchange_list = list(Exchange.objects.filter(initiative_worker = workuser, state = 1).order_by('itime')[:len(iexchange)])
     pexchange_list = list(Exchange.objects.filter(passivite_worker  = workuser, state = 1).order_by('ptime')[:len(pexchange)])
-    content = get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
+    content= u''
+    if(len(iexchange) >0):
+        content += get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
+    else:
+        content +=  get_exchangelist( request, pexchange_list, 0)
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -1791,6 +1823,218 @@ def open_officer_specific_overtime(request, form):
     dajax.assign('#earlylist', 'innerHTML', "")
     dajax.assign('#overtimelist', 'innerHTML', content)
     return dajax.json()
+
+@dajaxice_register
+def open_search_exchange(request , form ):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    iexchange = Exchange.objects.filter(initiative_worker = workuser, state = 1)
+    pexchange = Exchange.objects.filter(passivite_worker = workuser, state = 1)
+    iexchange_list = list(Exchange.objects.filter(initiative_worker = workuser, state = 1).order_by('itime')[:len(iexchange)])
+    pexchange_list = list(Exchange.objects.filter(passivite_worker  = workuser, state = 1).order_by('ptime')[:len(pexchange)])
+    content = u''
+    if(len(iexchange)>0):
+        content += get_search_exchangelist( request, iexchange_list, 0, int(startweek), int(endweek)) + get_search_exchangelist( request, pexchange_list, len(iexchange), int(startweek), int(endweek))
+    else:
+        content +=  get_search_exchangelist( request, pexchange_list, 0, int(startweek), int(endweek))
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', content)
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_leave(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    leave = Leave.objects.filter(worker = workuser, state = 1)
+    leave_list = list(Leave.objects.filter(worker = workuser, state = 1).order_by('time')[:len(leave)])
+    content = get_search_leavelist( request, leave_list,int(startweek), int(endweek))
+    dajax.assign('#leavelist', 'innerHTML', content)
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_absenteeism(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    absenteeism = Absenteeism.objects.filter(worker = workuser)
+    absenteeism_list = list(Absenteeism.objects.filter(worker = workuser).order_by('time')[:len(absenteeism)])
+    content = get_search_absenteeismlist( request, absenteeism_list,int(startweek), int(endweek))
+    dajax.assign('#absenlist', 'innerHTML', content)
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_late(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    late = Late.objects.filter(worker = workuser)
+    late_list = list(Late.objects.filter(worker = workuser).order_by('time')[:len(late)])
+    content = get_search_latelist( request, late_list, int(startweek), int(endweek))
+    dajax.assign('#latelist', 'innerHTML', content)
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_work(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    work = Work.objects.filter(worker = workuser)
+    work_list = list(Work.objects.filter(worker = workuser).order_by('time')[:len(work)])
+    content = get_search_worklist( request, work_list, int(startweek), int(endweek))
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', content)
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_early(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    early = Early.objects.filter(worker = workuser)
+    early_list = list(Early.objects.filter(worker = workuser).order_by('time')[:len(early)])
+    startweek =  int(startweek)
+    endweek = int(endweek)
+    content = get_search_earlylist( request, early_list, startweek, endweek)
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', content)
+    dajax.assign('#overtimelist', 'innerHTML', "")
+    return dajax.json()
+
+@dajaxice_register
+def open_search_overtime(request, form):
+    dajax = Dajax()
+    index = 0
+    workerid = u''
+    startweek = u''
+    endweek = u''
+    for ch in form:
+        if ch == ',':
+            index += 1
+        elif index == 0:
+            workerid += ch
+        elif index == 1:
+            startweek += ch
+        else:
+            endweek += ch
+    workuser = User.objects.get(id = int(workerid))
+    overtime = Overtime.objects.filter(worker = workuser)
+    overtime_list = list(Overtime.objects.filter(worker = workuser).order_by('time')[:len(overtime)])
+    content = get_search_overtimelist( request, overtime_list, int(startweek), int(endweek))
+    dajax.assign('#latelist', 'innerHTML', "")
+    dajax.assign('#absenlist', 'innerHTML', "")
+    dajax.assign('#leavelist', 'innerHTML', "")
+    dajax.assign('#exchangelist', 'innerHTML', "")
+    dajax.assign('#worklist', 'innerHTML', "")
+    dajax.assign('#earlylist', 'innerHTML', "")
+    dajax.assign('#overtimelist', 'innerHTML', content)
+    return dajax.json()
+
 
 @dajaxice_register
 def addovertime(request):

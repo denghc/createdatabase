@@ -68,6 +68,60 @@
                      <td class="num_wh"><a href="javascript:void(0);" id = "open_officer_overtime">{{ num_overtime }}</a></td>
                  </tr>
              </table>
+             <form name="searchForm" method="post" action="" id= "searchForm" onsubmit="return false;">
+             <table width="200" border="0" align="left" cellspacing="1" id="table3" >
+                 <tr class="att_number">
+                     <td class="att_wh">起始周次</td>
+                     <td class="att_wh">
+                             <select name="startweek" id="startweek">
+                                 <option value="1" selected="selected">一</option>
+                                 <option value="2">二</option>
+                                 <option value="3">三</option>
+                                 <option value="4">四</option>
+                                 <option value="5">五</option>
+                                 <option value="6">六</option>
+                                 <option value="7">七</option>
+                                 <option value="8">八</option>
+                                 <option value="9">九</option>
+                                 <option value="10">十</option>
+                                 <option value="11">十一</option>
+                                 <option value="12">十二</option>
+                                 <option value="13">十三</option>
+                                 <option value="14">十四</option>
+                                 <option value="15">十五</option>
+                                 <option value="16">十六</option>
+                                 <option value="17">十七</option>
+                                 <option value="18">十八</option>
+                             </select>
+                     </td>
+                     <td class="att_wh">结束周次</td>
+                     <td class="att_wh">
+                             <select name="endweek" id="endweek">
+                                 <option value="1">一</option>
+                                 <option value="2">二</option>
+                                 <option value="3">三</option>
+                                 <option value="4">四</option>
+                                 <option value="5">五</option>
+                                 <option value="6">六</option>
+                                 <option value="7">七</option>
+                                 <option value="8">八</option>
+                                 <option value="9">九</option>
+                                 <option value="10">十</option>
+                                 <option value="11">十一</option>
+                                 <option value="12">十二</option>
+                                 <option value="13">十三</option>
+                                 <option value="14">十四</option>
+                                 <option value="15">十五</option>
+                                 <option value="16">十六</option>
+                                 <option value="17">十七</option>
+                                 <option value="18"  selected="selected">十八</option>
+                             </select>
+                     </td>
+                     <td class="att_wh"> <input type="submit" name="modify" value="搜索" id="modify" style="background-color: #f9ad37;" onclick = "search()" /></td>
+                     <td class="att_wh">  <a class="icon" href="#" onclick="searchexcel()"><span>导出工时表</span></a></td>
+                 </tr>
+             </table>
+             </form>
          </div>
          <section id="latelist" >
              {{ latelist|safe }}

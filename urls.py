@@ -54,6 +54,7 @@ urlpatterns = patterns('',
     url(r'^officer_wisharrange/', requires_login(officer_wisharrange)),
 
     url(r'^uploadphoto/', uploadphoto, name= "uploadphoto"),
+    url(r'^SearchExtendenceExcel/', SearchExtendenceExcel, name= "SearchExtendenceExcel"),
     url(r'^AllExtendenceExcel/', AllExtendenceExcel, name= "AllExtendenceExcel"),
     url(r'^AllWorkArrangeExcel/', AllWorkArrangeExcel, name= "AllWorkArrangeExcel"),
     url(r'^AllWorkerInfoExcel/', AllWorkerInfoExcel, name= "AllWorkerInfoExcel"),

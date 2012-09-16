@@ -1251,6 +1251,77 @@ def AllExtendenceExcel(request):
             writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total), str(overhourtotal) , str(earlyhourtotal), str(len(work))])
     return response
 
+def SearchExtendenceExcel(request):
+    startweek = request.GET.get('p1')
+    endweek = request.GET.get('p2')
+    response = HttpResponse(mimetype='text/csv')
+    response.write('\xEF\xBB\xBF')
+    response['Content-Disposition'] = 'attachment; filename=出勤记录.csv'
+    writer = csv.writer(response)
+    workerinfo = WorkerInfo.objects.get(user = request.user)
+    workerlist = WorkerInfo.objects.filter(department = workerinfo.department)
+    name = u'姓名'
+    id = u'学号'
+    leave= u'请假次数'
+    absenteeism = u'旷工次数'
+    late = u'迟到次数'
+    exchange = u'换班次数'
+    add=u'加班工时'
+    minus=u'早退工时'
+    normolwork=u'工时记录'
+    writer.writerow([ id.encode('utf8'), name.encode('utf8'),leave.encode('utf8'),absenteeism.encode('utf8'),
+                      late.encode('utf8'),exchange.encode('utf8'),add.encode('utf8'),minus.encode('utf8'),normolwork.encode('utf8')])
+    startdate = get_startdate(int(startweek)).date()
+    enddate= get_enddate(int(endweek)).date()
+    for item in workerlist:
+        early = Early.objects.filter(worker = item.user )
+        overtime = Overtime.objects.filter(worker = item.user)
+        overhourtotal = 0.0
+        earlyhourtotal = 0.0
+        for over in overtime:
+            if(over.time.date()>=startdate and over.time.date()<=enddate):
+                overhourtotal += over.hournum
+        for ear in early:
+            if(ear.time.date()>=startdate and ear.time.date()<=enddate):
+                earlyhourtotal += ear.hournum
+        leave = Leave.objects.filter( state = 1, worker = item.user)
+        absenteeism = Absenteeism.objects.filter(worker = item.user)
+        late = Late.objects.filter(worker = item.user)
+        iexchange = Exchange.objects.filter( state = 1, initiative_worker = item.user)
+        pexchange = Exchange.objects.filter( state = 1, passivite_worker = item.user)
+        work = Work.objects.filter(worker = item.user)
+        num_work = 0
+        num_leave =0
+        num_late = 0
+        num_absenteeism = 0
+        num_iexchange = 0
+        num_pexchange = 0
+        for lea in leave:
+            if(lea.time.date()>=startdate and lea.time.date()<=enddate):
+                num_leave += 1
+        for la in late:
+            if(la.time.date()>=startdate and la.time.date()<=enddate):
+                num_late += 1
+        for wo in work:
+            if(wo.time.date()>=startdate and wo.time.date()<=enddate):
+                num_work += 1
+        for ab in absenteeism:
+            if(ab.time.date()>=startdate and ab.time.date()<=enddate):
+                num_absenteeism += 1
+        for ie in iexchange:
+            if(ie.itime.date()>=startdate and ie.itime.date()<=enddate):
+                num_iexchange += 1
+        for pe in pexchange:
+            if(pe.ptime.date()>=startdate and pe.ptime.date()<=enddate):
+                num_pexchange += 1
+        num_total = num_iexchange + num_pexchange
+        if(num_leave != 0 or num_absenteeism != 0 or num_late != 0 or num_total!=0 or num_work != 0  or num_work != 0 or overhourtotal != 0 or earlyhourtotal != 0):
+            name = u'%s'%(item.name)
+            name = name.encode('utf8')
+            work = Work.objects.filter( worker = item.user)
+            writer.writerow([item.user.username , name, str(len(leave)), str(len(absenteeism)) , str(len(late)), str(num_total), str(overhourtotal) , str(earlyhourtotal), str(len(work))])
+    return response
+
 def AllWorkArrangeExcel(request):
     response = HttpResponse(mimetype='text/csv')
     response.write('\xEF\xBB\xBF')

@@ -309,6 +309,177 @@ def gettotal_managerrecord(request):
     result += u'</table></div>'
     return result
 
+def get_startdate(startweek):
+    if(startweek == 1):
+        a = '2012-9-10'
+    elif(startweek==2):
+        a = '2012-9-17'
+    elif(startweek==3):
+        a = '2012-9-24'
+    elif(startweek==4):
+        a = '2012-10-1'
+    elif(startweek==5):
+        a = '2012-10-8'
+    elif(startweek==6):
+        a = '2012-10-15'
+    elif(startweek==7):
+        a = '2012-10-22'
+    elif(startweek==8):
+        a = '2012-10-29'
+    elif(startweek==9):
+        a = '2012-11-5'
+    elif(startweek==10):
+        a = '2012-11-12'
+    elif(startweek==11):
+        a = '2012-11-19'
+    elif(startweek==12):
+        a = '2012-11-26'
+    elif(startweek==13):
+        a = '2012-12-3'
+    elif(startweek==14):
+        a = '2012-12-10'
+    elif(startweek==15):
+        a = '2012-12-17'
+    elif(startweek==16):
+        a = '2012-12-24'
+    elif(startweek==17):
+        a = '2012-12-31'
+    elif(startweek==18):
+        a = '2013-1-7'
+    b = datetime.datetime.strptime(a,'%Y-%m-%d')
+    return b
+
+def get_enddate(endweek):
+    if(endweek == 1):
+        a = '2012-9-16'
+    elif(endweek==2):
+        a = '2012-9-23'
+    elif(endweek==3):
+        a = '2012-9-30'
+    elif(endweek==4):
+        a = '2012-10-7'
+    elif(endweek==5):
+        a = '2012-10-14'
+    elif(endweek==6):
+        a = '2012-10-21'
+    elif(endweek==7):
+        a = '2012-10-28'
+    elif(endweek==8):
+        a = '2012-10-4'
+    elif(endweek==9):
+        a = '2012-11-11'
+    elif(endweek==10):
+        a = '2012-11-18'
+    elif(endweek==11):
+        a = '2012-11-25'
+    elif(endweek==12):
+        a = '2012-11-2'
+    elif(endweek==13):
+        a = '2012-12-9'
+    elif(endweek==14):
+        a = '2012-12-16'
+    elif(endweek==15):
+        a = '2012-12-23'
+    elif(endweek==16):
+        a = '2012-12-30'
+    elif(endweek==17):
+        a = '2012-12-6'
+    elif(endweek==18):
+        a = '2013-1-13'
+    b = datetime.datetime.strptime(a,'%Y-%m-%d')
+    return b
+
+def gettotal_searchrecord(request, startweek, endweek):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">历史记录</div><div class="clear_float"></div>'\
+             u'<table width="300" border="0" align="left" cellspacing="1" id="table5" >'\
+             u'<tr class="att_name"><td class="time_wh">学号</td><td class="time_wh">姓名</td>'\
+             u'<td class="time_wh">请假记录</td><td class="time_wh">旷工记录</td><td class="time_wh">迟到记录</td>'\
+             u'<td class="time_wh">换班记录</td><td class="time_wh">工时记录</td><td class="time_wh">早退记录</td><td class="time_wh">加班记录</td></tr>'
+    workerinfo = WorkerInfo.objects.get(user = request.user)
+    workerlist = WorkerInfo.objects.filter(department = workerinfo.department)
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in workerlist:
+        early = Early.objects.filter(worker = item.user )
+        overtime = Overtime.objects.filter(worker = item.user)
+        overhourtotal = 0.0
+        earlyhourtotal = 0.0
+        for over in overtime:
+            if(over.time.date()>=startdate and over.time.date()<=enddate):
+                overhourtotal += over.hournum
+        for ear in early:
+            if(ear.time.date()>=startdate and ear.time.date()<=enddate):
+                earlyhourtotal += ear.hournum
+        leave = Leave.objects.filter( state = 1, worker = item.user)
+        absenteeism = Absenteeism.objects.filter(worker = item.user)
+        late = Late.objects.filter(worker = item.user)
+        iexchange = Exchange.objects.filter( state = 1, initiative_worker = item.user)
+        pexchange = Exchange.objects.filter( state = 1, passivite_worker = item.user)
+        work = Work.objects.filter(worker = item.user)
+        num_work = 0
+        num_leave =0
+        num_late = 0
+        num_absenteeism = 0
+        num_iexchange = 0
+        num_pexchange = 0
+        for lea in leave:
+            if(lea.time.date()>=startdate and lea.time.date()<=enddate):
+                num_leave += 1
+        for la in late:
+            if(la.time.date()>=startdate and la.time.date()<=enddate):
+                num_late += 1
+        for wo in work:
+            if(wo.time.date()>=startdate and wo.time.date()<=enddate):
+                num_work += 1
+        for ab in absenteeism:
+            if(ab.time.date()>=startdate and ab.time.date()<=enddate):
+                num_absenteeism += 1
+        for ie in iexchange:
+            if(ie.itime.date()>=startdate and ie.itime.date()<=enddate):
+                num_iexchange += 1
+        for pe in pexchange:
+            if(pe.ptime.date()>=startdate and pe.ptime.date()<=enddate):
+                num_pexchange += 1
+        num_total = num_iexchange + num_pexchange
+        if(num_leave != 0 or num_absenteeism != 0 or num_late != 0 or num_total!=0 or num_work != 0  or num_work != 0 or overhourtotal != 0 or earlyhourtotal != 0):
+            result += u'<tr class="att_number"><td class="time_wh">%s</td><td class="time_wh">%s</td>'%(item.user.username,item.name)
+            if(num_leave != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_leave(%s, %s, %s )" '\
+                          u'style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id , startweek, endweek , num_leave)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%(num_leave)
+            if(num_absenteeism != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_absenteeism(%s, %s, %s)" '\
+                          u'style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id , startweek, endweek ,  num_absenteeism)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%(num_absenteeism)
+            if(num_late != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_late(%s, %s, %s )" '\
+                          u'style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id ,   startweek, endweek , num_late)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%( num_late)
+            if(num_total != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_exchange(%s, %s, %s)" '\
+                          u'style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id , startweek, endweek ,  num_total)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%( num_total)
+            if(num_work != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_work(%s, %s, %s)" '\
+                          u'style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id ,  startweek, endweek , num_work)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%( num_work)
+            if(earlyhourtotal != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_early(%s , %s, %s)" style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id ,  startweek, endweek , earlyhourtotal)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%( earlyhourtotal)
+            if(overhourtotal != 0):
+                result += u'<td class="time_wh"><a href="javascript:void(0);" onclick="open_search_overtime(%s , %s, %s)" style="text-decoration: none" target="_blank" >%s</a></td>' %(item.user_id ,  startweek, endweek , overhourtotal)
+            else:
+                result +=  u'<td class="time_wh">%s</a></td>'%( overhourtotal)
+    result += u'</table></div>'
+    return result
+
 def gettotal_officerrecord(request):
     result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
              u'<div id="qingjia_list"><div class="window_title">历史记录</div><div class="clear_float"></div>'\
@@ -442,7 +613,7 @@ def get_worklist(request, worklist ):
 
 def get_earlylist(request, earlylist ):
     result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
-             u'<div id="qingjia_list"><div class="window_title">工时记录</div><div class="clear_float"></div>'\
+             u'<div id="qingjia_list"><div class="window_title">早退记录</div><div class="clear_float"></div>'\
              u'<table width="300" border="0" align="left" cellspacing="1" id="table5" >'\
              u'<tr class="att_name"><td class="code_wh">工时/小时</td><td class="time_wh">上班时间</td>'\
              u'<td class="time_wh">上班班次</td><td class="reason_wh1">附加说明</td></tr>'
@@ -455,7 +626,7 @@ def get_earlylist(request, earlylist ):
 
 def get_overtimelist(request, overtimelist ):
     result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
-             u'<div id="qingjia_list"><div class="window_title">工时记录</div><div class="clear_float"></div>'\
+             u'<div id="qingjia_list"><div class="window_title">加班记录</div><div class="clear_float"></div>'\
              u'<table width="300" border="0" align="left" cellspacing="1" id="table5" >'\
              u'<tr class="att_name"><td class="code_wh">工时/小时</td><td class="time_wh">上班时间</td>'\
              u'<td class="time_wh">上班班次</td><td class="reason_wh1">附加说明</td></tr>'
@@ -463,6 +634,190 @@ def get_overtimelist(request, overtimelist ):
         result += u'<tr class="att_number"><td class="code_wh">%s</td>'\
                   u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
                   u'<td class="reason_wh1">%s</td></tr>'%(item.hournum , item.time.date(), item.day, item.workorder,item.reason)
+    result += u'</table></div>'
+    return result
+
+def get_search_exchangelist(request,exchangelist , num, startweek, endweek):
+    if(num == 0):
+        result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+                 u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+                 u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+                 u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+                 u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+                 u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+                 u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+        iffirst = 1
+    else:
+        result = u''
+        iffirst = 0
+    sum = num
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in exchangelist:
+        iname = WorkerInfo.objects.get(user = item.initiative_worker).name
+        pname = WorkerInfo.objects.get(user = item.passivite_worker).name
+        if (item.initiative_worker == request.user):
+            if(item.itime.date()>=startdate and item.itime.date()<=enddate):
+                sum += 1
+                result += u'<tr class="att_number"><td class="code_wh"> %s</td>'\
+                          u'<td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                          u'<td class="duty_wh"><li class="font_grey">星期%s</li><li>班次%s</li></td>'\
+                          u'<td class="duty_wh"><li class="font_grey">星期%s</li><li>班次%s</li></td>'\
+                          u'<td class="duty_wh">%s</td><td class="reason_wh1">%s</td>'\
+                          u'<td class="reason_wh1">%s</td></tr>'%(sum ,item.itime.date(), item.ptime.date(),
+                                                                  item.iday,item.iorder,item.pday, item.porder, pname,"(" +iname + ") :" + item.ireason, "("+pname + ") :" +item.preason)
+        else:
+            if(item.ptime.date()>=startdate and item.ptime.date()<=enddate):
+                sum += 1
+                result += u'<tr class="att_number"><td class="code_wh"> %s</td>'\
+                          u'<td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                          u'<td class="duty_wh"><li class="font_grey">星期%s</li><li>班次%s</li></td>'\
+                          u'<td class="duty_wh"><li class="font_grey">星期%s</li><li>班次%s</li></td>'\
+                          u'<td class="duty_wh">%s</td><td class="reason_wh1">%s</td>'\
+                          u'<td class="reason_wh1">%s</td></tr>'%(sum , item.ptime.date(), item.itime.date(),
+                                                                  item.pday,item.porder,item.iday, item.iorder, iname,"(" +iname + "):" + item.ireason, "("+pname + ") :"+item.preason)
+    if iffirst == 0:
+        result += u'</table></div>'
+    return result
+
+def get_search_latelist(request, latelist, startweek, endweek ):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">迟到记录</div><div class="clear_float"></div>'\
+             u'<table width="300" border="0" align="left" cellspacing="1" id="table3" >'\
+             u'<tr class="att_name"><td class="code_wh">编号</td><td class="time_wh">学号</td><td class="time_wh">姓名</td><td class="time_wh">迟到时间</td>'\
+             u'<td class="time_wh">迟到班次</td><td class="reason_wh1">迟到原因</td><td class="time_wh">删除操作</td></tr>'
+    sum = 0
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in latelist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            sum += 1
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="code_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updatelate%s" method="post" action="" id= "updatelate%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="late_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="20" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updatelate(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleatelate(%s)"  />'\
+                      u'</td></tr>'%(sum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workorder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
+    result += u'</table></div>'
+    return result
+
+def get_search_worklist(request, worklist, startweek, endweek ):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">工时记录</div><div class="clear_float"></div>'\
+             u'<table width="300" border="0" align="left" cellspacing="1" id="table3" >'\
+             u'<tr class="att_name"><td class="code_wh">编号</td><td class="time_wh">学号</td><td class="time_wh">姓名</td><td class="time_wh">上班时间</td>'\
+             u'<td class="time_wh">上班班次</td><td class="reason_wh1">附加说明</td><td class="time_wh">删除操作</td></tr>'
+    sum = 0
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in worklist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            sum += 1
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="code_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updatelate%s" method="post" action="" id= "updatelate%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="late_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="20" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updatelate(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleatework(%s)"  />'\
+                      u'</td></tr>'%(sum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workorder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
+    result += u'</table></div>'
+    return result
+
+def get_search_earlylist(request, earlylist, startweek, endweek ):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">早退记录</div><div class="clear_float"></div>'\
+             u'<table width="300" border="0" align="left" cellspacing="1" id="table3" >'\
+             u'<tr class="att_number"><td class="time_wh">工时/小时</td><td class="time_wh">学号</td><td class="time_wh">姓名</td><td class="time_wh">上班时间</td>'\
+             u'<td class="time_wh">上班班次</td><td class="reason_wh1">附加说明</td><td class="time_wh">删除操作</td></tr>'
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in earlylist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="time_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updatelate%s" method="post" action="" id= "updatelate%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="late_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="20" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updatelate(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleateearly(%s)"  />'\
+                      u'</td></tr>'%(item.hournum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workorder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
+    result += u'</table></div>'
+    return result
+
+def get_search_overtimelist(request, overtimelist , startweek, endweek):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">加班记录</div><div class="clear_float"></div>'\
+             u'<table width="300" border="0" align="left" cellspacing="1" id="table3" >'\
+             u'<tr class="att_number"><td class="time_wh">工时/小时</td><td class="time_wh">学号</td><td class="time_wh">姓名</td><td class="time_wh">上班时间</td>'\
+             u'<td class="time_wh">上班班次</td><td class="reason_wh1">附加说明</td><td class="time_wh">删除操作</td></tr>'
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in overtimelist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="time_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updatelate%s" method="post" action="" id= "updatelate%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="late_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="20" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updatelate(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleateovertime(%s)"  />'\
+                      u'</td></tr>'%(item.hournum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workorder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
+        result += u'</table></div>'
+    return result
+
+def get_search_leavelist(request,leavelist  , startweek, endweek):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">请假记录</div><div class="clear_float">'\
+             u'</div><table width="300" border="0" align="left" cellspacing="1" id="table3" >'\
+             u'<tr class="att_name"><td class="code_wh">编号</td><td class="time_wh">学号</td><td class="time_wh">姓名</td>'\
+             u'<td class="time_wh">请假时间</td><td class="time_wh">请假班次</td>'\
+             u'<td class="reason_wh">请假原因</td><td class="time_wh">删除操作</td></tr>'
+    sum = 0
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in leavelist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            sum += 1
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="code_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updateleave%s" method="post" action="" id= "updateleave%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="leave_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="10" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updateleave(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleateleave(%s)"  />'\
+                      u'</td></tr>'%(sum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workorder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
+    result += u'</table></div>'
+    return result
+
+def get_search_absenteeismlist(request,absenteeismlist , startweek, endweek ):
+    result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/> '\
+             u'<div id="qingjia_list"><div class="window_title">旷工记录</div><div class="clear_float"></div>'\
+             u'<table width="726" border="0" align="left" cellspacing="1" id="table3" ><tr class="att_name">'\
+             u'<td class="code_wh">编号</td><td class="time_wh">学号</td><td class="time_wh">姓名</td><td class="time_wh">旷工时间</td>'\
+             u'<td class="time_wh">旷工班次</td><td class="reason_wh1">旷工原因</td><td class="time_wh">删除操作</td></tr>'
+    sum = 0
+    startdate = get_startdate(startweek).date()
+    enddate= get_enddate(endweek).date()
+    for item in absenteeismlist:
+        if(item.time.date()>=startdate and item.time.date()<=enddate):
+            sum += 1
+            workerinfo = WorkerInfo.objects.get(user = item.worker)
+            result += u'<tr class="att_number"><td class="code_wh">%s</td><td class="time_wh">%s</td><td class="time_wh">%s</td>'\
+                      u'<td class="time_wh">%s</td><td class="duty_wh">星期%s 班次%s</td>'\
+                      u'<form name="updateabsenteeism%s" method="post" action="" id= "updateabsenteeism%s" onsubmit="return false;"><td class="reason_wh1">'\
+                      u'<input type="text" name="absenteeism_id" style="display: none" value="%s" >'\
+                      u'<input type="text" name="reason_content" maxlength="10" value="%s" id="cardid" class="text-input">'\
+                      u'<input type="submit" value="提交" onclick="updateabsenteeism(%s);"  /><label id="msg%s" style="color: red;"></label></td></form>'\
+                      u'<td class="duty_wh"> <input name="qingjia" type="submit" id="qingjia" value="删除" onclick="deleateabsenteeism(%s)"  />'\
+                      u'</td></tr>'%(sum ,item.worker.username, workerinfo.name, item.time.date(), item.day, item.workOrder, item.id, item.id, item.id, item.reason ,item.id, item.id, item.id)
     result += u'</table></div>'
     return result
 
