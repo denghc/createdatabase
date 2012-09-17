@@ -2290,6 +2290,15 @@ def deleaveworker(request , form):
     if(len(currentMessage) > 0):
         currentMessage = CurrentMessage.objects.get(worker = user)
         currentMessage.delete()
+    department_id  = workerinfo.department.id
+    schedule = Schedule.objects.filter(department = department_id)
+    workerstr = u''+ ","+str(form)+ "."
+    for sch in schedule:
+        if(sch.attendance.find(workerstr)>0):
+            sch.attendance.replace(workerstr, '')
+        if(sch.administrator==user):
+            sch.administrator=request.user
+        sch.save()
     user.delete()
     workerinfo.delete()
     workerinfo = WorkerInfo.objects.get(user = request.user)
