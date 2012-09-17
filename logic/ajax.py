@@ -2295,7 +2295,9 @@ def deleaveworker(request , form):
     workerstr = u''+ ","+str(form)+ "."
     for sch in schedule:
         if(sch.attendance.find(workerstr)>0):
-            sch.attendance.replace(workerstr, '')
+            sch.attendance = sch.attendance.replace(workerstr, '')
+        if(sch.worker.find(workerstr)>0):
+            sch.worker = sch.worker.replace(workerstr, '')
         if(sch.administrator==user):
             sch.administrator=request.user
         sch.save()
