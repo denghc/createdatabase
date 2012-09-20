@@ -274,7 +274,7 @@ def gettotal_managerrecord(request):
         i_pexchange = Exchange.objects.filter(iadministrator = request.user, state = 1, passivite_worker = item.user)
         p_pexchange = Exchange.objects.filter(padministrator = request.user, state = 1,  passivite_worker = item.user)
         num_total = len(i_iexchange) + len(p_iexchange) + len(i_pexchange) + len(p_pexchange)
-        work = Work.objects.filter( worker = item.user)
+        work = Work.objects.filter(administrator = request.user, worker = item.user)
         if(len(leave) != 0 or len(absenteeism) != 0 or len(late) != 0 or num_total!=0 or len(work)!=0 or len(early) != 0 or len(overtime) != 0):
             result += u'<tr class="att_number"><td class="time_wh">%s</td><td class="time_wh">%s</td>'%(item.user.username,item.name)
             if(len(leave) != 0):
