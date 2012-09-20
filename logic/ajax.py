@@ -431,7 +431,15 @@ def openexchange(request):
     pexchange = Exchange.objects.filter(passivite_worker = request.user, state = 1)
     iexchange_list = list(Exchange.objects.filter(initiative_worker = request.user, state = 1).order_by('itime')[:len(iexchange)])
     pexchange_list = list(Exchange.objects.filter(passivite_worker  = request.user, state = 1).order_by('ptime')[:len(pexchange)])
-    content = get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+              u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+              u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+              u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+              u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+              u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+              u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+    content += get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
+    content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -555,8 +563,16 @@ def open_specificexchange(request, form):
     p_iexchange_list = list(Exchange.objects.filter(passivite_worker = user_worker, iadministrator = manager, state = 1).order_by('ptime')[:len(p_iexchange)])
     i_pexchange_list = list(Exchange.objects.filter(initiative_worker = user_worker,padministrator = manager, state = 1).order_by('ptime')[:len(i_pexchange)])
     p_pexchange_list = list(Exchange.objects.filter(passivite_worker = user_worker,padministrator = manager, state = 1).order_by('ptime')[:len(p_pexchange)])
-    content = get_exchangelist( request, i_iexchange_list, 0) + get_exchangelist( request, p_iexchange_list, len(i_iexchange))\
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+               u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+               u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+               u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+               u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+               u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+               u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+    content += get_exchangelist( request, i_iexchange_list, 0) + get_exchangelist( request, p_iexchange_list, len(i_iexchange))\
               + get_exchangelist( request, i_pexchange_list, len(i_iexchange) + len(p_iexchange)) + get_exchangelist( request, p_pexchange_list, len(i_iexchange) + len(p_iexchange) + len(i_pexchange))
+    content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -1466,7 +1482,15 @@ def open_manager_exchange(request):
     pexchange = Exchange.objects.filter(padministrator = request.user, state = 1)
     iexchange_list = list(Exchange.objects.filter(iadministrator = request.user, state = 1).order_by('itime')[:len(iexchange)])
     pexchange_list = list(Exchange.objects.filter(padministrator  = request.user, state = 1).order_by('ptime')[:len(pexchange)])
-    content = get_manager_exchangelist( request, iexchange_list, 0) + get_manager_exchangelist( request, pexchange_list, len(iexchange))
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+             u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+             u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+             u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+             u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+             u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+             u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+    content += get_manager_exchangelist( request, iexchange_list, 0) + get_manager_exchangelist( request, pexchange_list, len(iexchange))
+    content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -1572,7 +1596,15 @@ def open_officer_exchange(request):
     workerinfo = WorkerInfo.objects.get(user = request.user)
     exchange = Exchange.objects.filter(department = workerinfo.department, state = 1)
     exchange_list = list(Exchange.objects.filter(department = workerinfo.department, state = 1).order_by('itime')[:len(exchange)])
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+              u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+              u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+              u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+              u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+              u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+              u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
     content = get_manager_exchangelist( request, exchange_list, 0)
+    content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -1715,10 +1747,15 @@ def open_officer_specific_exchange(request , form ):
     iexchange_list = list(Exchange.objects.filter(initiative_worker = workuser, state = 1).order_by('itime')[:len(iexchange)])
     pexchange_list = list(Exchange.objects.filter(passivite_worker  = workuser, state = 1).order_by('ptime')[:len(pexchange)])
     content= u''
-    if(len(iexchange) >0):
-        content += get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
-    else:
-        content +=  get_exchangelist( request, pexchange_list, 0)
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+              u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+              u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+              u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+              u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+              u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+              u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+    content += get_exchangelist( request, iexchange_list, 0) + get_exchangelist( request, pexchange_list, len(iexchange))
+    content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")
@@ -1845,11 +1882,15 @@ def open_search_exchange(request , form ):
     pexchange = Exchange.objects.filter(passivite_worker = workuser, state = 1)
     iexchange_list = list(Exchange.objects.filter(initiative_worker = workuser, state = 1).order_by('itime')[:len(iexchange)])
     pexchange_list = list(Exchange.objects.filter(passivite_worker  = workuser, state = 1).order_by('ptime')[:len(pexchange)])
-    content = u''
-    if(len(iexchange)>0):
-        content += get_search_exchangelist( request, iexchange_list, 0, int(startweek), int(endweek)) + get_search_exchangelist( request, pexchange_list, len(iexchange), int(startweek), int(endweek))
-    else:
-        content +=  get_search_exchangelist( request, pexchange_list, 0, int(startweek), int(endweek))
+    content = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
+                 u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
+                 u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
+                 u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
+                 u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
+                 u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
+                 u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+    content += get_search_exchangelist( request, iexchange_list, 0, int(startweek), int(endweek)) + get_search_exchangelist( request, pexchange_list, len(iexchange), int(startweek), int(endweek))
+    result += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
     dajax.assign('#leavelist', 'innerHTML', "")

@@ -544,19 +544,8 @@ def gettotal_officerrecord(request):
     return result
 
 def get_exchangelist(request,exchangelist , num):
-    if(num == 0):
-        result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>' \
-                 u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>' \
-                 u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">' \
-                 u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>' \
-                 u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>' \
-                 u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>' \
-                 u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
-        iffirst = 1
-    else:
-        result = u''
-        iffirst = 0
     sum = num
+    result = u''
     for item in exchangelist:
         sum += 1
         iname = WorkerInfo.objects.get(user = item.initiative_worker).name
@@ -577,8 +566,6 @@ def get_exchangelist(request,exchangelist , num):
                       u'<td class="duty_wh">%s</td><td class="reason_wh1">%s</td>'\
                       u'<td class="reason_wh1">%s</td></tr>'%(sum , item.ptime.date(), item.itime.date(),
                       item.pday,item.porder,item.iday, item.iorder, iname,"(" +iname + "):" + item.ireason, "("+pname + ") :"+item.preason)
-    if iffirst == 0:
-        result += u'</table></div>'
     return result
 
 def get_latelist(request, latelist ):
@@ -639,13 +626,7 @@ def get_overtimelist(request, overtimelist ):
 
 def get_search_exchangelist(request,exchangelist , num, startweek, endweek):
     if(num == 0):
-        result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
-                 u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
-                 u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
-                 u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
-                 u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
-                 u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
-                 u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
+        result
         iffirst = 1
     else:
         result = u''
@@ -676,8 +657,6 @@ def get_search_exchangelist(request,exchangelist , num, startweek, endweek):
                           u'<td class="duty_wh">%s</td><td class="reason_wh1">%s</td>'\
                           u'<td class="reason_wh1">%s</td></tr>'%(sum , item.ptime.date(), item.itime.date(),
                                                                   item.pday,item.porder,item.iday, item.iorder, iname,"(" +iname + "):" + item.ireason, "("+pname + ") :"+item.preason)
-    if iffirst == 0:
-        result += u'</table></div>'
     return result
 
 def get_search_latelist(request, latelist, startweek, endweek ):
@@ -1046,18 +1025,7 @@ def get_workerresultlist(choose):
     return result
 
 def get_manager_exchangelist(request,exchangelist , num):
-    if(num == 0):
-        result = u'<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>'\
-                 u' <div id="qingjia_list"><div class="window_title">换班记录</div><div class="clear_float"></div>'\
-                 u'<table width="727" border="0" align="left" cellspacing="1" id="table6" ><tr class="att_name">'\
-                 u'<td class="code_wh">编号</td><td class="time_wh">我的时间</td>'\
-                 u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
-                 u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
-                 u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
-        iffirst = 1
-    else:
-        result = u''
-        iffirst = 0
+    result=u''
     sum = num
     for item in exchangelist:
         sum += 1
@@ -1079,8 +1047,6 @@ def get_manager_exchangelist(request,exchangelist , num):
                       u'<td class="duty_wh">%s</td><td class="reason_wh1">%s</td>'\
                       u'<td class="reason_wh1">%s</td></tr>'%(sum , item.ptime.date(), item.itime.date(),
                                                               item.pday,item.porder,item.iday, item.iorder, iname,"(" +iname + "):" + item.ireason, "("+pname + ") :"+item.preason)
-    if iffirst == 0:
-        result += u'</table></div>'
     return result
 
 def get_manager_latelist(request, latelist ):
