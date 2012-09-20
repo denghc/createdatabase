@@ -42,18 +42,22 @@
     <div class="window_title"></div>
     	<hr align="left" width="724" size="1" noshade="noshade" class="hr"/>
         <div width="850" align="right" >
+            <input type="submit" name="delete" value="添加工时" id="addwork" style="background-color: #f9ad37;" onclick = "Dajaxice.RegisterSystem.logic.addwork(Dajax.process);"/>
             <input type="submit" name="delete" value="添加加班" id="delete" style="background-color: #f9ad37;" onclick = "Dajaxice.RegisterSystem.logic.addovertime(Dajax.process);"/>
             <input type="submit" name="modify" value="添加早退" id="modify" style="background-color: #f9ad37;" onclick = "Dajaxice.RegisterSystem.logic.addearly(Dajax.process);" />
         </div>
+        <section id="work_list" >
+            {{work_list|safe }}
+        </section>
         <section id="overtime_list" >
             {{overtime_list|safe }}
         </section>
         <section id="early_list" >
             {{early_list|safe }}
         </section>
-            <section id="signin_list" >
-                {{signin_list|safe }}
-            </section>
+        <section id="signin_list" >
+            {{signin_list|safe }}
+        </section>
 
   	</div>
     </div>

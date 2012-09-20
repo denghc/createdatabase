@@ -184,6 +184,10 @@ function updateleave(id){
     var data = $('#updateleave'+id).serializeObject();
     Dajaxice.RegisterSystem.logic.updateleave(Dajax.process, {'form':data});
 }
+function finishaddwork(){
+    var data = $('#work').serializeObject();
+    Dajaxice.RegisterSystem.logic.finishaddwork(Dajax.process, {'form':data});
+}
 function finishovertime(){
     var data = $('#overtime').serializeObject();
     Dajaxice.RegisterSystem.logic.finishovertime(Dajax.process, {'form':data});

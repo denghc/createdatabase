@@ -2035,7 +2035,6 @@ def open_search_overtime(request, form):
     dajax.assign('#overtimelist', 'innerHTML', content)
     return dajax.json()
 
-
 @dajaxice_register
 def addovertime(request):
     dajax = Dajax()
@@ -2047,6 +2046,7 @@ def addovertime(request):
               u'<td class="banci">加班原因：<input type="text" name="reason" style="max-width: 500px" value=""></td>'\
               u'<td class="banci"><input name="change" type="submit" class="change" value="提交"  onclick="finishovertime();"/></td>' \
               u'<label id="msg" style="color: red;"></label></div></form></tr></table>'
+    dajax.assign('#work_list', 'innerHTML', "")
     dajax.assign('#early_list', 'innerHTML', "")
     dajax.assign('#overtime_list', 'innerHTML', content)
     return dajax.json()
@@ -2074,6 +2074,47 @@ def finishovertime(request, form):
     return dajax.json()
 
 @dajaxice_register
+def addwork(request):
+    dajax = Dajax()
+    content = u'<table width="500" border="0" align="left" cellspacing="1" id="table8" ><tr>'\
+              u'<form name="work" id ="work"  method="post" action="" onsubmit="return false;"><div>'\
+              u'<td class="banci">学号<input type="text" name="cardid"  style="max-width: 100px" value=""></td>'\
+              u'<td class="banci">班次<input type="text" name="order"  style="max-width: 60px" value=""></td>'\
+              u'<td class="banci">星期<select name="goalday" id="goalday">'\
+              u'<option value="1" selected="selected">一</option><option value="2">二</option>'\
+              u'<option value="3">三</option><option value="4">四</option><option value="5">五</option>'\
+              u'<option value="6">六</option><option value="7">日</option></select></td>'\
+              u'<td class="banci">附加说明：<input type="text" name="reason" style="max-width: 500px" value=""></td>'\
+              u'<td class="banci"><input name="change" type="submit" class="change" value="提交"  onclick="finishaddwork();"/></td>'\
+              u'<label id="msg" style="color: red;"></label></div></form></tr></table>'
+    dajax.assign('#early_list', 'innerHTML', "")
+    dajax.assign('#overtime_list', 'innerHTML', "")
+    dajax.assign('#work_list', 'innerHTML', content)
+    return dajax.json()
+
+@dajaxice_register
+def finishaddwork(request, form):
+    dajax = Dajax()
+    goalworker = User.objects.filter(username=form["cardid"])
+    if(len(goalworker) <= 0):
+        dajax.assign('#msg', 'innerHTML', u'学号不存在！')
+    else:
+        goalworker = User.objects.get(username=form["cardid"])
+        workerinfo = WorkerInfo.objects.get(user = goalworker)
+        date = datetime.date.today().weekday() + 1
+        schedule = Schedule.objects.filter(day = date, workorder = int(form["order"]), department = workerinfo.department)
+        if(len(schedule) <= 0):
+            dajax.assign('#msg', 'innerHTML', u'班次不存在！')
+        else:
+            goalday = int(form["goalday"])
+            schedule = Schedule.objects.get(day = date, workorder = int(form["order"]), department = workerinfo.department)
+            work = Work(worker =  goalworker,reason = form["reason"], day = goalday,workorder = form["order"],
+                time = datetime.datetime.today(), administrator =  schedule.administrator, department = workerinfo.department )
+            work.save()
+            dajax.assign('#msg', 'innerHTML', u'添加成功！')
+    return dajax.json()
+
+@dajaxice_register
 def addearly(request):
     dajax = Dajax()
     content = u'<table width="500" border="0" align="left" cellspacing="1" id="table8" ><tr>'\
@@ -2086,6 +2127,7 @@ def addearly(request):
               u'<label id="msg" style="color: red;"></label></div></form></tr></table>'
     dajax.assign('#early_list', 'innerHTML', content)
     dajax.assign('#overtime_list', 'innerHTML', "")
+    dajax.assign('#work_list', 'innerHTML', "")
     return dajax.json()
 
 @dajaxice_register
@@ -2105,7 +2147,7 @@ def finishearly(request, form):
             schedule = Schedule.objects.get(day = date, workorder = int(form["order"]), department = workerinfo.department)
             hour = float(form["hournum"])
             early = Early(worker =  goalworker,reason = form["reason"], day = date,workorder = form["order"],
-                time = datetime.datetime.today(), administrator =  schedule.administrator, department = workerinfo.department, hournum = form["hournum"] )
+                time = datetime.datetime.today(), administrator =  schedule.administrator, department = workerinfo.department, hournum = hour )
             early.save()
             dajax.assign('#msg', 'innerHTML', u'添加成功！')
     return dajax.json()
