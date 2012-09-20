@@ -629,7 +629,7 @@ def setleave(request , form):
     if form.is_valid():
         dep  = WorkerInfo.objects.get(user = request.user).department
         schedule =  Schedule.objects.get(department = dep ,day = form.cleaned_data['leaveday'], workorder = form.cleaned_data['leaveorder'] )
-        worker =schedule.worker
+        worker =schedule.attendance
         workerstr = u''+ ","+ str(request.user.id) + "."
         if(worker.find(workerstr) > 0):
             temp = Leave.objects.filter(worker = request.user ,day = form.cleaned_data['leaveday'], workorder = form.cleaned_data['leaveorder'] )
@@ -681,14 +681,14 @@ def setexchange(request , form):
             dajax.script("alert('无效的班次！')")
             return dajax.json()
         else:
-            worker = myschedule.worker
+            worker = myschedule.attendance
             print  u'%s;%s;' %(form.cleaned_data['myday'],form.cleaned_data['myorder']) + worker
             workerstr_my = u''+ ","+ str(request.user.id) + "."
             if(worker.find(workerstr_my) > 0):
                 goalid = User.objects.get(username=form.cleaned_data['goalname']).id
                 workerstr_goal = u''+ ","+ str(goalid) + "."
                 goalschedule =  Schedule.objects.get(department = dep ,day = form.cleaned_data['goalday'], workorder = form.cleaned_data['goalorder'] )
-                goalworker = goalschedule.worker
+                goalworker = goalschedule.attendance
                 if(worker.find(workerstr_goal)) > 0 :
                     dajax.assign('#exchange_msg', 'innerHTML', u'对方在您班次已有班！')
                     return dajax.json()
