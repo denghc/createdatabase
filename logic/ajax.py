@@ -1615,7 +1615,7 @@ def open_officer_exchange(request):
               u'<td class="time_wh">对方时间</td><td class="duty_wh">我的班次</td>'\
               u'<td class="duty_wh">对方班次</td><td class="duty_wh">对方姓名</td>'\
               u'<td class="reason_wh1">换班原因</td><td class="reason_wh1">换班回复</td></tr>'
-    content = get_manager_exchangelist( request, exchange_list, 0)
+    content += get_manager_exchangelist( request, exchange_list, 0)
     content += u'</table></div>'
     dajax.assign('#latelist', 'innerHTML', "")
     dajax.assign('#absenlist', 'innerHTML', "")
