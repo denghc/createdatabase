@@ -1153,7 +1153,9 @@ def resetsedule(request , form):
     content += get_workersetlist( schedule.worker, schedule)
     content +=  u'</table><div width="450"><input type="submit" name="modify" value="添加队员" id="modify" style="background-color: #f9ad37;'\
                 u'"onclick = "addworker_schedule(%s)" /><input type="submit" name="modify" value="完成设置" id="modify" style="background-color: #f9ad37;'\
-                u'"onclick = "Dajaxice.RegisterSystem.logic.finishresetsed(Dajax.process);" /></div>'%(schedule.id)
+                u'"onclick = "Dajaxice.RegisterSystem.logic.finishresetsed(Dajax.process);" /><input type="submit" name="modify" value="补录工时" id="modify" style="background-color: #f9ad37;'\
+                u'"onclick = "addworker_schedule(%s)" /><input type="submit" name="modify" value="同步班表" id="modify" style="background-color: #f9ad37;'\
+                u'"onclick = "resetattendance(%s)" /></div>'%(schedule.id,schedule.id,schedule.id)
     dajax.assign('#setseduleinfo', 'innerHTML', content)
     dajax.assign('#addworker', 'innerHTML', u'')
     return dajax.json()
@@ -1432,6 +1434,16 @@ def addworker_sch  (request , form):
                 u'"onclick = "addworker_schedule(%s)" /><input type="submit" name="modify" value="完成设置" id="modify" style="background-color: #f9ad37;'\
                 u'"onclick = "Dajaxice.RegisterSystem.logic.finishresetsed(Dajax.process);" /></div>'%(schedule.id)
     dajax.assign('#setseduleinfo', 'innerHTML', content)
+    return dajax.json()
+
+@dajaxice_register
+def resetattendance  (request, form):
+    dajax = Dajax()
+    content = u''
+    schdule = Schedule.objects.get(id  = int(form))
+    schdule.attendance=schdule.worker
+    schdule.save()
+    dajax.redirect("/officer_arrangement/",delay=0)
     return dajax.json()
 
 @dajaxice_register
@@ -2137,22 +2149,24 @@ def addwork(request):
 def finishaddwork(request, form):
     dajax = Dajax()
     goalworker = User.objects.filter(username=form["cardid"])
+    goalday = int(form["goalday"])
     if(len(goalworker) <= 0):
         dajax.assign('#msg', 'innerHTML', u'学号不存在！')
     else:
         goalworker = User.objects.get(username=form["cardid"])
         workerinfo = WorkerInfo.objects.get(user = goalworker)
-        date = datetime.date.today().weekday() + 1
-        schedule = Schedule.objects.filter(day = date, workorder = int(form["order"]), department = workerinfo.department)
+        schedule = Schedule.objects.filter(day = goalday, workorder = int(form["order"]), department = workerinfo.department)
         if(len(schedule) <= 0):
             dajax.assign('#msg', 'innerHTML', u'班次不存在！')
         else:
-            goalday = int(form["goalday"])
-            schedule = Schedule.objects.get(day = date, workorder = int(form["order"]), department = workerinfo.department)
-            work = Work(worker =  goalworker,reason = form["reason"], day = goalday,workorder = form["order"],
-                time = datetime.datetime.today(), administrator =  schedule.administrator, department = workerinfo.department )
-            work.save()
-            dajax.assign('#msg', 'innerHTML', u'添加成功！')
+            schedule = Schedule.objects.get(day = goalday, workorder = int(form["order"]), department = workerinfo.department)
+            if(schedule.administrator!=request.user):
+                dajax.assign('#msg', 'innerHTML', u'您不是该班次负责人！')
+            else:
+                work = Work(worker =  goalworker,reason = form["reason"], day = goalday,workorder = form["order"],
+                    time = datetime.datetime.today(), administrator =  schedule.administrator, department = workerinfo.department )
+                work.save()
+                dajax.assign('#msg', 'innerHTML', u'添加成功！')
     return dajax.json()
 
 @dajaxice_register

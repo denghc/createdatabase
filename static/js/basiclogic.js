@@ -241,6 +241,11 @@ function addworker_schresult(schid, userid){
 function addworker_schedule(schid){
     Dajaxice.RegisterSystem.logic.addworker_schedule(Dajax.process, {'form':schid});
 }
+function resetattendance(schid){
+    if (confirm("将实际上班表同步为固定排班表？")){
+        Dajaxice.RegisterSystem.logic.resetattendance(Dajax.process, {'form':schid});
+    }
+}
 
 function addworker_result(schid){
     Dajaxice.RegisterSystem.logic.addworker_result(Dajax.process, {'form':schid});
