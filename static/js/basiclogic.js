@@ -241,8 +241,14 @@ function addworker_schresult(schid, userid){
 function addworker_schedule(schid){
     Dajaxice.RegisterSystem.logic.addworker_schedule(Dajax.process, {'form':schid});
 }
+
+function addworktime_schedule(schid){
+    if (confirm("给该实际班次的队员批量补录1工时？")){
+        Dajaxice.RegisterSystem.logic.addworktime_schedule(Dajax.process, {'form':schid});
+    }
+}
 function resetattendance(schid){
-    if (confirm("将实际上班表同步为固定排班表？")){
+    if (confirm("将实际上班表同步为固定排班表（清除请假，换班等）？")){
         Dajaxice.RegisterSystem.logic.resetattendance(Dajax.process, {'form':schid});
     }
 }

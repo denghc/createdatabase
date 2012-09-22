@@ -1154,7 +1154,7 @@ def resetsedule(request , form):
     content +=  u'</table><div width="450"><input type="submit" name="modify" value="添加队员" id="modify" style="background-color: #f9ad37;'\
                 u'"onclick = "addworker_schedule(%s)" /><input type="submit" name="modify" value="完成设置" id="modify" style="background-color: #f9ad37;'\
                 u'"onclick = "Dajaxice.RegisterSystem.logic.finishresetsed(Dajax.process);" /><input type="submit" name="modify" value="补录工时" id="modify" style="background-color: #f9ad37;'\
-                u'"onclick = "addworker_schedule(%s)" /><input type="submit" name="modify" value="同步班表" id="modify" style="background-color: #f9ad37;'\
+                u'"onclick = "addworktime_schedule(%s)" /><input type="submit" name="modify" value="同步班表" id="modify" style="background-color: #f9ad37;'\
                 u'"onclick = "resetattendance(%s)" /></div>'%(schedule.id,schedule.id,schedule.id)
     dajax.assign('#setseduleinfo', 'innerHTML', content)
     dajax.assign('#addworker', 'innerHTML', u'')
@@ -1437,9 +1437,28 @@ def addworker_sch  (request , form):
     return dajax.json()
 
 @dajaxice_register
-def resetattendance  (request, form):
+def addworktime_schedule  (request, form):
     dajax = Dajax()
     content = u''
+    schdule = Schedule.objects.get(id  = int(form))
+    workerinfo = WorkerInfo.objects.get(user = request.user)
+    workerlist = WorkerInfo.objects.filter(department = workerinfo.department)
+    for item in workerlist:
+        if item.accept != 2:
+            workerstr = u''+ ","+ str(item.user_id) + "."
+            if (schdule.attendance.find(workerstr) > 0):
+                content  += u'<tr><td class="att_wh">%s</td><td class="num_wh">%s</td><td><div align="right" >'\
+                            u'<input type="submit" name="modify" value="添加" id="modify" onclick = "addworker_sch(%s, %s)" /></div></td>'\
+                            u'</tr>' %(item.name, item.user.username ,schdule.id, item.user_id)
+                work = Work(worker =  item.user,reason = u'批量补录工时', day = schdule.day,workorder = schdule.workorder,
+                    time = datetime.datetime.today(), administrator =  schdule.administrator, department = schdule.department )
+                work.save()
+    dajax.redirect("/officer_arrangement/",delay=0)
+    return dajax.json()
+
+@dajaxice_register
+def resetattendance  (request, form):
+    dajax = Dajax()
     schdule = Schedule.objects.get(id  = int(form))
     schdule.attendance=schdule.worker
     schdule.save()
